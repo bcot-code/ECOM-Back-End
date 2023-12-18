@@ -6,36 +6,49 @@ const { Product, Category, Tag, ProductTag } = require("../../models");
 router.get("/", (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
-  Product.findAll().then((product) => {
-    let prodObj = product.map((prod) => prod.get({ plain: true }));
-    return Category.findAll()
-      .then((category) => {
-        let catMap = category.reduce((accumulator, currentValue) => {
-          accumulator[currentValue.id] = currentValue.category_name;
-          return accumulator;
-        }, {});
-        prodObj.forEach((item) => (item.category = catMap[item.category_id]));
-        res.render("homepage", {
-          products: prodObj,
-          loggedIn: req.session.loggedIn,
-        });
-      })
-      .catch((err) => err);
-  });
+  Product.findAll({
+    attributes: ["id", "product_name", "price", "stock", "category_id"],
+    include: [
+      {
+        model: Category,
+        as: "category",
+        attributes: ["id", "category_name"],
+      },
+      {
+        model: Tag,
+        attributes: ["id", "tag_name"],
+      },
+    ],
+  })
+    .then((dbProductData) => res.json(dbProductData))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
-
 // get one product
 router.get("/:id", async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
-  try {
-    const prodId = await Product.findByPk(req.params.id, {
-      include: [{ model: Category }, { model: Tag }],
+  Product.findOne({
+    attributes: ["id", "product_name", "price", "stock", "category_id"],
+    include: [
+      {
+        model: Category,
+        as: "category",
+        attributes: ["id", "category_name"],
+      },
+      {
+        model: Tag,
+        attributes: ["id", "tag_name"],
+      },
+    ],
+  })
+    .then((dbProductData) => res.json(dbProductData))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
     });
-    res.status(200).json(prodId);
-  } catch (err) {
-    console.log(err);
-  }
 });
 
 // create new product
