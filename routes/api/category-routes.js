@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Category, Product } = require("../../Develop/models");
+const { Category, Product } = require("../../models/");
 
 // The `/api/categories` endpoint
 
@@ -7,7 +7,10 @@ router.get("/", (req, res) => {
   // find all categories
   // be sure to include its associated Products
   Category.findAll({
-    include: [Product],
+    include: {
+      model: Product,
+      attributes: ["product_name"],
+    },
   })
     .then((categoryData) => res.json(categoryData))
     .catch((err) => {
@@ -21,16 +24,12 @@ router.get("/:id", (req, res) => {
   // be sure to include its associated Products
   Category.findOne({
     where: { id: req.params.id },
-    include: [Product],
+    include: {
+      model: Product,
+      attributes: ["category_id"],
+    },
   })
-    .then((categoryData) => {
-      if (!categoryData) {
-        return res
-          .status(404)
-          .json({ message: "No category found with this id!" });
-      }
-      res.json(categoryData);
-    })
+    .then((categoryData) => res.json(categoryData))
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
@@ -60,13 +59,19 @@ router.put("/:id", (req, res) => {
         id: req.params.id,
       },
     }
-  ).then((updatedCategory) => {
-    if (!updatedCategory[0]) {
-      res.status(404).json({ message: "No category with this id!" });
-      return;
-    }
-    res.json(updatedCategory);
-  });
+  )
+    .then((categoryData) => {
+      if (!categoryData) {
+        res.status(404).json({
+          message: "No Category found with that Id.",
+        });
+        return;
+      }
+      res.json(categoryData);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
 });
 
 router.delete("/:id", (req, res) => {
@@ -76,8 +81,8 @@ router.delete("/:id", (req, res) => {
       id: req.params.id,
     },
   })
-    .then((deleteCategory) => {
-      if (!deleteCategory) {
+    .then((categoryData) => {
+      if (!categoryData) {
         res.status(404).json({ message: "No category found with this id!" });
         return;
       }
