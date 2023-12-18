@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Tag, Product, ProductTag } = require("../../Develop/models");
+const { Tag, Product, ProductTag } = require("../../models");
 
 // The `/api/tags` endpoint
 
@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
   Tag.findAndCountAll({
     include: [Product],
   })
-    .then((dbTagData) => res.json(dbTagData))
+    .then((ProductTag) => res.json(ProductTag))
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
@@ -22,18 +22,18 @@ router.get("/:id", (req, res) => {
   Tag.findOne({
     where: { id: req.params.id },
     include: [{ model: Product }],
-  }).then((dbTagData) => {
-    if (!dbTagData) {
+  }).then((ProductTag) => {
+    if (!ProductTag) {
       return res.status(404).json({ message: "No tag found with this id" });
     }
-    res.json(dbTagData);
+    res.json(ProductTag);
   });
 });
 
 router.post("/", (req, res) => {
   // create a new tag
   Tag.create(req.body)
-    .then((dbTagData) => res.json(dbTagData))
+    .then((ProductTag) => res.json(ProductTag))
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
@@ -44,11 +44,11 @@ router.put("/:id", (req, res) => {
   // update a tag's name by its `id` value
   Tag.update(req.body, {
     where: { id: req.params.id },
-  }).then((dbTagData) => {
-    if (!dbTagData[0]) {
+  }).then((ProductTag) => {
+    if (!ProductTag[0]) {
       return res.status(404).json({ message: "No tag found with this id" });
     }
-    res.json(dbTagData);
+    res.json(ProductTag);
   });
 });
 
