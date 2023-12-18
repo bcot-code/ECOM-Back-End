@@ -23,6 +23,9 @@ Product.init(
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+      validate: {
+        isDecimal: true,
+      },
     },
     stock: {
       type: DataTypes.INTEGER,
@@ -32,9 +35,9 @@ Product.init(
         isNumeric: "Please enter a numeric value.",
       },
     },
-    // Store a reference of the `id` of the `Category` that owns this Book
+    // Store a reference of the `id` of the `Category`
     category_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       references: {
         model: "Category",
         key: "id",
