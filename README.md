@@ -23,7 +23,7 @@ To install the necessary dependencies for this application, run the following co
 You’ll need to use the MySQL2 Links to an external site. and Sequelize Links to an external site. packages to connect your Express.js API to a MySQL database and the dotenv package Links to an external site. to use environment variables to store sensitive data, like your MySQL username, password, and database name.
 
 Here is a tutorial of mock up : in the process...
-[Mockup](https://watch.screencastify.com/vJq57918DQ3YOx)
+[Mockup](https://watch.screencastify.com/v/Wzvb9Nh4acezHtcUzjC2)
 
 ```
 
