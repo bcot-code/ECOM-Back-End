@@ -6,8 +6,11 @@ const { Tag, Product, ProductTag } = require("../../models");
 router.get("/", (req, res) => {
   // find all tags
   // be sure to include its associated Product data
-  Tag.findAndCountAll({
-    include: [{ model: Product, ProductTag }],
+  Tag.findAll({
+    include: {
+      model: Product,
+      attributes: ["product_name", "price", "stock", "category_id"],
+    },
   })
     .then((tagData) => res.json(tagData))
     .catch((err) => {
@@ -21,7 +24,7 @@ router.get("/:id", (req, res) => {
   // be sure to include its associated Product data
   Tag.findOne({
     where: { id: req.params.id },
-    include: [{ model: Product, ProductTag }],
+    include: [{ model: Product }],
   }).then((tagData) => {
     if (!tagData) {
       return res.status(404).json({ message: "No tag found with this id" });
